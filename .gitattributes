@@ -1,0 +1,49 @@
+# Auto-detect text files and normalize line endings to LF on commit
+* text=auto eol=crlf
+
+# C# source
+*.cs     text diff=csharp
+*.csx    text diff=csharp
+*.cake   text diff=csharp
+
+# .NET project files
+*.csproj text diff=xml
+*.sln    text eol=crlf
+*.props  text diff=xml
+*.targets text diff=xml
+*.config text diff=xml
+*.xml    text diff=xml
+*.xaml   text diff=xml
+*.resx   text diff=xml
+*.settings text diff=xml
+
+# Web / config
+*.json   text
+*.yaml   text
+*.yml    text
+*.md     text diff=markdown
+*.txt    text
+*.sh     text eol=lf
+*.cmd    text eol=crlf
+*.bat    text eol=crlf
+
+# Data files (варианты заданий)
+*.csv    text
+*.xls    binary
+*.xlsx   binary
+
+# Images / binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.bmp    binary
+*.svg    text
+
+# Compiled / binary output — never diff
+*.dll    binary
+*.exe    binary
+*.pdb    binary
+*.nupkg  binary
+*.snupkg binary
