@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using RunningApp.Models;
 
@@ -10,22 +11,41 @@ namespace RunningApp.Data
         public static List<RunningData> LoadFromCsv(string filePath)
         {
             var result = new List<RunningData>();
+
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException($"Файл не найден: {filePath}");
+
             var lines = File.ReadAllLines(filePath);
 
             for (int i = 1; i < lines.Length; i++)
             {
+                if (string.IsNullOrWhiteSpace(lines[i])) continue;
+
                 var parts = lines[i].Split(',');
-                var data = new RunningData
+                if (parts.Length < 6) continue;
+
+                try
                 {
-                    Date = DateTime.Parse(parts[0]),
-                    DistanceKm = double.Parse(parts[1]),
-                    DurationMinutes = int.Parse(parts[2]),
-                    AvgSpeedKmph = double.Parse(parts[3]),
-                    MaxSpeedKmph = double.Parse(parts[4]),
-                    AvgPulse = int.Parse(parts[5])
-                };
-                result.Add(data);
+                    var data = new RunningData
+                    {
+                        Date = DateTime.Parse(parts[0].Trim(), CultureInfo.InvariantCulture),
+                        DistanceKm = double.Parse(parts[1].Trim(), CultureInfo.InvariantCulture),
+                        DurationMinutes = int.Parse(parts[2].Trim()),
+                        AvgSpeedKmph = double.Parse(parts[3].Trim(), CultureInfo.InvariantCulture),
+                        MaxSpeedKmph = double.Parse(parts[4].Trim(), CultureInfo.InvariantCulture),
+                        AvgPulse = int.Parse(parts[5].Trim())
+                    };
+                    result.Add(data);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Ошибка в строке {i + 1}: {ex.Message}");
+                }
             }
+
+            if (result.Count == 0)
+                throw new InvalidDataException("Файл не содержит корректных данных");
+
             return result;
         }
     }
