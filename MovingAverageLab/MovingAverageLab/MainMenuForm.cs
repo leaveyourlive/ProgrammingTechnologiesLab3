@@ -48,7 +48,11 @@ namespace MovingAverageLab
 
             // Вариант 1
             RoundedButton btn1 = CreateStyledButton("ВАРИАНТ 1: ПРОБЕЖКИ");
-            btn1.Click += (s, e) => MessageBox.Show("Задание 1: Статистика пробежек за месяц.", "Информация");
+            btn1.Click += (s, e) =>
+            {
+                var form1 = new RunningApp.Forms.MainForm();
+                form1.ShowDialog();
+            };
 
             // Вариант 3
             RoundedButton btn3 = CreateStyledButton("ВАРИАНТ 3: ТЕМПЕРАТУРА");

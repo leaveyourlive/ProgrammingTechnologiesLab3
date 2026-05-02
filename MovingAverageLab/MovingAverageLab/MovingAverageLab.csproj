@@ -11,4 +11,9 @@
     <Product>MovingAverageLab</Product>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.7" />
+    <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
+  </ItemGroup>
+
 </Project>
