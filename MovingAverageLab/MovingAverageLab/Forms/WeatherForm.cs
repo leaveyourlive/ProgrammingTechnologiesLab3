@@ -15,11 +15,13 @@ namespace MovingAverageLab.Forms
         private PlotView _plotView = null!;
         private Label _lblSpread = null!;
         private NumericUpDown _numN = null!;
+        private NumericUpDown _numDayFrom = null!;
+        private NumericUpDown _numDayTo = null!;
 
         public WeatherForm()
         {
             Text = "Вариант 3 — Температура в городе";
-            Size = new Size(1500, 680);
+            Size = new Size(1710, 735);
             StartPosition = FormStartPosition.CenterScreen;
             BackColor = Color.FromArgb(28, 28, 30);
             ForeColor = Color.White;
@@ -49,6 +51,28 @@ namespace MovingAverageLab.Forms
 
             topPanel.Controls.Add(btnLoad);
             topPanel.Controls.Add(btnExport);
+
+
+            var filterPanel = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 40,
+                BackColor = Color.FromArgb(36, 36, 38)
+            };
+
+            var lblFrom = new Label { Text = "День с:", ForeColor = Color.LightGray, AutoSize = true, Left = 10, Top = 12 };
+
+            _numDayFrom = new NumericUpDown { Minimum = 1, Maximum = 31, Value = 1, Width = 55, Left = 60, Top = 10, BackColor = Color.FromArgb(58, 58, 60), ForeColor = Color.White };
+
+            var lblTo = new Label { Text = "по:", ForeColor = Color.LightGray, AutoSize = true, Left = 125, Top = 12 };
+
+            _numDayTo = new NumericUpDown { Minimum = 1, Maximum = 31, Value = 31, Width = 55, Left = 150, Top = 10, BackColor = Color.FromArgb(58, 58, 60), ForeColor = Color.White };
+
+            var btnApply = new Button { Text = "Применить", Width = 90, Height = 28, Left = 215, Top = 7, BackColor = Color.FromArgb(52, 120, 200), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+            btnApply.Click += BtnApply_Click;
+
+            filterPanel.Controls.AddRange(new Control[] { lblFrom, _numDayFrom, lblTo, _numDayTo, btnApply });
+            Controls.Add(filterPanel);
             Controls.Add(topPanel);
 
             // Нижняя панель: перепад + прогноз
@@ -102,6 +126,7 @@ namespace MovingAverageLab.Forms
                 Dock = DockStyle.None,
                 Width = 1700,
                 Height = 580,
+                Top = 75,
                 Orientation = Orientation.Vertical
             };
 
@@ -133,6 +158,23 @@ namespace MovingAverageLab.Forms
             Controls.Add(split);
         }
 
+        private void BtnApply_Click(object? sender, EventArgs e)
+        {
+            if (_data.Count == 0) return;
+
+            int from = (int)_numDayFrom.Value - 1;
+            int to = (int)_numDayTo.Value;
+            if (from >= to)
+            {
+                MessageBox.Show("Неверный диапазон дней.", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var filtered = _data.Skip(from).Take(to - from).ToList();
+            BuildChart(filtered);
+        }
+
         private void BtnLoad_Click(object? sender, EventArgs e)
         {
             using var dlg = new OpenFileDialog { Filter = "CSV|*.csv" };
@@ -147,8 +189,12 @@ namespace MovingAverageLab.Forms
             }
 
             FillTable();
-            BuildChart();
+            BuildChart(_data);
             ShowSpreadInfo();
+
+            _numDayTo.Maximum = _data.Count;
+            _numDayTo.Value = _data.Count;
+            _numDayFrom.Maximum = _data.Count;
         }
 
         private void FillTable()
@@ -187,7 +233,7 @@ namespace MovingAverageLab.Forms
             }
         }
 
-        private void BuildChart()
+        private void BuildChart(List<WeatherRecord> records)
         {
             var model = new PlotModel { Title = "Температура по дням", Background = OxyColor.FromRgb(28, 28, 30), TextColor = OxyColors.LightGray};
 
@@ -203,11 +249,11 @@ namespace MovingAverageLab.Forms
             });
 
             model.Series.Add(MakeSeries("Максимум",
-                _data.Select(r => r.MaxTemp).ToList(), OxyColors.Red));
+                records.Select(r => r.MaxTemp).ToList(), OxyColors.Red));
             model.Series.Add(MakeSeries("Минимум",
-                _data.Select(r => r.MinTemp).ToList(), OxyColors.Blue));
+                records.Select(r => r.MinTemp).ToList(), OxyColors.Blue));
             model.Series.Add(MakeSeries("Средняя",
-                _data.Select(r => r.AvgTemp).ToList(), OxyColors.Green));
+                records.Select(r => r.AvgTemp).ToList(), OxyColors.Green));
 
             _plotView.Model = model;
         }
