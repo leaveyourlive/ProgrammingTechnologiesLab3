@@ -35,7 +35,10 @@ namespace MovingAverageLab.Forms
                 Width = 120,
                 Height = 30,
                 Left = 8,
-                Top = 5
+                Top = 5,
+                FlatStyle = FlatStyle.Flat,
+                ForeColor = Color.White,
+                BackColor = Color.FromArgb(58, 58, 60)
             };
             btnLoad.Click += BtnLoad_Click;
 
@@ -45,9 +48,25 @@ namespace MovingAverageLab.Forms
                 Width = 140,
                 Height = 30,
                 Left = 136,
-                Top = 5
+                Top = 5,
+                FlatStyle = FlatStyle.Flat,
+                ForeColor = Color.White,
+                BackColor = Color.FromArgb(58, 58, 60)
             };
             btnExport.Click += BtnExport_Click;
+
+            var btnBack = new Button 
+            { 
+                Text = "← Назад",
+                Width = 80,
+                Height = 30,
+                Left = 290,
+                Top = 7,
+                BackColor = Color.FromArgb(235, 52, 52),
+                ForeColor = Color.White, FlatStyle = FlatStyle.Flat 
+            };
+            btnBack.Click += (s, e) => Close();
+            topPanel.Controls.Add(btnBack);
 
             topPanel.Controls.Add(btnLoad);
             topPanel.Controls.Add(btnExport);
