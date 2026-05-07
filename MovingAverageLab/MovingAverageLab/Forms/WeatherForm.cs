@@ -95,14 +95,14 @@ namespace MovingAverageLab.Forms
             Controls.Add(topPanel);
 
             // Нижняя панель: перепад + прогноз
-            var bottomPanel = new Panel { Dock = DockStyle.Bottom, Height = 40, BackColor = Color.FromArgb(44, 44, 46) };
+            var bottomPanel = new Panel { Dock = DockStyle.Bottom, Height = 50, BackColor = Color.FromArgb(44, 44, 46) };
 
             _lblSpread = new Label
             {
                 Text = "Загрузите CSV файл",
                 AutoSize = false,
                 Width = 480,
-                Height = 40,
+                Height = 20,
                 Left = 8,
                 TextAlign = ContentAlignment.MiddleLeft
             };
@@ -124,6 +124,19 @@ namespace MovingAverageLab.Forms
                 Left = 555,
                 Top = 10
             };
+
+            var lblStats = new Label
+            {
+                Name = "lblStats",
+                ForeColor = Color.LightGray,
+                AutoSize = false,
+                Width = 480,
+                Height = 20,
+                Left = 8,
+                Top = 22,
+                Font = new Font("Segoe UI", 8f)
+            };
+            bottomPanel.Controls.Add(lblStats);
 
             var btnForecast = new Button
             {
@@ -177,6 +190,18 @@ namespace MovingAverageLab.Forms
             Controls.Add(split);
         }
 
+        private void ShowDescriptionStats()
+        {
+            var stats = _data
+                .GroupBy(r => r.Description)
+                .OrderByDescending(g => g.Count())
+                .Select(g => $"{g.Key}: {g.Count()} дн.")
+                .ToList();
+
+            var lblStats = Controls.Find("lblStats", true).FirstOrDefault() as Label;
+            if (lblStats != null)
+                lblStats.Text = "Погода: " + string.Join("   ", stats);
+        }
         private void BtnApply_Click(object? sender, EventArgs e)
         {
             if (_data.Count == 0) return;
@@ -214,6 +239,8 @@ namespace MovingAverageLab.Forms
             _numDayTo.Maximum = _data.Count;
             _numDayTo.Value = _data.Count;
             _numDayFrom.Maximum = _data.Count;
+
+            ShowDescriptionStats();
         }
 
         private void FillTable()
