@@ -61,6 +61,18 @@ namespace RunningApp.Forms
             btnForecast = new Button { Text = " Прогноз", Location = new Point(750, 500), Size = new Size(150, 30), Enabled = false, BackColor = Color.LightCoral };
             btnForecast.Click += BtnForecast_Click!;
 
+            Button btnExport = new Button
+            {
+                Text = " Экспорт графика",
+                Location = new Point(750, 390),
+                Size = new Size(150, 30),
+                BackColor = Color.LightYellow,
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand
+            };
+
+            btnExport.Click += BtnExportChart_Click!;
+            Controls.Add(btnExport);
             Controls.Add(dgvData);
             Controls.Add(chartMain);
             Controls.Add(btnLoadFile);
@@ -134,6 +146,46 @@ namespace RunningApp.Forms
 
             MessageBox.Show(msg, "Результат прогноза", MessageBoxButtons.OK, MessageBoxIcon.Information);
             ChartRenderer.DrawDistanceChart(chartMain, _data, forecast);
+        }
+        // Экспорт графика
+
+        private void BtnExportChart_Click(object? sender, EventArgs e)
+        {
+            if (chartMain == null || chartMain.Series.Count == 0)
+            {
+                MessageBox.Show("Нет данных для экспорта. Сначала загрузите файл.",
+                    "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "PNG Image|*.png|JPEG Image|*.jpg|BMP Image|*.bmp";
+                sfd.Title = "Сохранить график";
+                sfd.FileName = $"график_{DateTime.Now:yyyyMMdd_HHmmss}.png";
+                sfd.DefaultExt = "png";
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        // Сохраняем график в выбранный формат
+                        ChartImageFormat format = ChartImageFormat.Png;
+                        if (sfd.FilterIndex == 2) format = ChartImageFormat.Jpeg;
+                        else if (sfd.FilterIndex == 3) format = ChartImageFormat.Bmp;
+
+                        chartMain.SaveImage(sfd.FileName, format);
+
+                        MessageBox.Show($" График успешно сохранен!\n\n📁 Путь: {sfd.FileName}",
+                            "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($" Ошибка сохранения:\n{ex.Message}",
+                            "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
         }
     }
 }

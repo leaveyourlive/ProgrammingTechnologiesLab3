@@ -1,11 +1,16 @@
-namespace MovingAverageLab;
+using System;
+using System.Windows.Forms;
 
-internal static class Program
+namespace MovingAverageLab
 {
-    [STAThread]
-    static void Main()
+    internal static class Program
     {
-        ApplicationConfiguration.Initialize();
-        Application.Run(new MainMenuForm());
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new MainMenuForm()); 
+        }
     }
 }
