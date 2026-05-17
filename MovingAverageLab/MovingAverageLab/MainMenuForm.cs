@@ -64,7 +64,7 @@ namespace MovingAverageLab
 
             // Вариант 9
             RoundedButton btn9 = CreateStyledButton("ВАРИАНТ 9: ЖИЛЬЁ");
-            btn9.Click += (s, e) => new MovingAverageLab.Forms.MainForm1().Show();
+            btn9.Click += (s, e) => new MovingAverageLab.MainForm1().Show();
 
             // Разделитель (небольшой отступ перед выходом)
             Panel spacer = new Panel { Height = 30, Width = 10 };

@@ -2,7 +2,7 @@ using System.Data;
 using HousingPriceAnalyzer.Models;
 using HousingPriceAnalyzer.Services;
 
-namespace MovingAverageLab.Forms
+namespace MovingAverageLab
 {
     public class MainForm1 : Form
     {
@@ -11,6 +11,7 @@ namespace MovingAverageLab.Forms
         private List<HousingRecord> _records = new();
 
         private DataGridView         _dataGrid    = null!;
+        private ToolStripButton      _btnCharts   = null!;  // новая кнопка графиков
         private ToolStripStatusLabel _statusLabel = null!;
 
         public MainForm1()
@@ -32,7 +33,7 @@ namespace MovingAverageLab.Forms
             _statusLabel = new ToolStripStatusLabel("Загрузите файл данных...");
             statusStrip.Items.Add(_statusLabel);
 
-            // ToolStrip — панель инструментов
+            // ToolStrip — добавлена кнопка Графики
             var toolStrip = new ToolStrip
             {
                 Dock      = DockStyle.Top,
@@ -47,7 +48,21 @@ namespace MovingAverageLab.Forms
             };
             btnOpen.Click += OnOpenFile;
 
-            toolStrip.Items.Add(btnOpen);
+            // добавляем кнопку графиков
+            _btnCharts = new ToolStripButton("📊  Графики")
+            {
+                DisplayStyle = ToolStripItemDisplayStyle.Text,
+                Font         = new Font("Segoe UI", 9.5f),
+                Enabled      = false
+            };
+            _btnCharts.Click += OnShowCharts;
+
+            toolStrip.Items.AddRange(new ToolStripItem[]
+            {
+                btnOpen,
+                new ToolStripSeparator(),
+                _btnCharts
+            });
 
             // Таблица данных
             _dataGrid = new DataGridView
@@ -101,6 +116,7 @@ namespace MovingAverageLab.Forms
             {
                 _records = _dataLoader.LoadData(dlg.FileName);
                 FillTable();
+                _btnCharts.Enabled = true; // активируем кнопку после загрузки
                 _statusLabel.Text = $"✓  Загружено {_records.Count} записей  |  {dlg.FileName}";
             }
             catch (Exception ex)
@@ -108,6 +124,12 @@ namespace MovingAverageLab.Forms
                 MessageBox.Show($"Ошибка при загрузке файла:\n{ex.Message}",
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void OnShowCharts(object? sender, EventArgs e)
+        {
+            if (_records.Count == 0) return;
+            new ChartForm(_records, null).Show(this);
         }
 
         private void FillTable()
