@@ -56,7 +56,7 @@ namespace MovingAverageLab
 
             // Вариант 3
             RoundedButton btn3 = CreateStyledButton("ВАРИАНТ 3: ТЕМПЕРАТУРА");
-            btn3.Click += (s, e) => MessageBox.Show("Задание 3: Температура в городе.", "Информация");
+            btn3.Click += (s, e) => new MovingAverageLab.Forms.WeatherForm().Show();
 
             // Вариант 8
             RoundedButton btn8 = CreateStyledButton("ВАРИАНТ 8: ЗАРПЛАТЫ");
