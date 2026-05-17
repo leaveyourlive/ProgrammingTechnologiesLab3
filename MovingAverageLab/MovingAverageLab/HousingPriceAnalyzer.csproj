@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>HousingPriceAnalyzer</RootNamespace>
+    <AssemblyName>HousingPriceAnalyzer</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- OxyPlot: интерактивные графики с зумом, паном и экспортом -->
+    <PackageReference Include="OxyPlot.WindowsForms" Version="2.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Файл данных копируется рядом с exe при сборке -->
+    <Content Include="data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

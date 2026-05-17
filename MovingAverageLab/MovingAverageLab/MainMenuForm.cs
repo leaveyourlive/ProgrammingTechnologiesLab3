@@ -64,7 +64,7 @@ namespace MovingAverageLab
 
             // Вариант 9
             RoundedButton btn9 = CreateStyledButton("ВАРИАНТ 9: ЖИЛЬЁ");
-            btn8.Click += (s, e) => MessageBox.Show("Задание 9: Анализ цен на первичное жильё в РФ за 15 лет с прогнозом.", "Информация");
+            btn9.Click += (s, e) => new MovingAverageLab.MainForm1().Show();
 
             // Разделитель (небольшой отступ перед выходом)
             Panel spacer = new Panel { Height = 30, Width = 10 };
