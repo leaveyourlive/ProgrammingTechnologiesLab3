@@ -12,28 +12,29 @@ namespace RunningApp.Forecast
 
         /// Прогнозирование следующего значения методом скользящей средней
 
-        public static double PredictNext(List<double> values, int windowSize)
+        public static double PredictNext(List<double> values, int windowSize, bool ignoreZeros = true)
         {
-            // Проверка на пустые данные
-            if (values == null || values.Count == 0)
-                return 0;
+            if (values == null || values.Count == 0) return 0;
+            if (windowSize <= 0) windowSize = 1;
 
-            // Корректировка размера окна
-            if (windowSize <= 0)
-                windowSize = 1;
+            var lastValues = values.Skip(values.Count - windowSize).Take(windowSize).ToList();
 
-            // Если данных меньше окна - берем среднее всех
-            if (values.Count < windowSize)
-                return Math.Round(values.Average(), 2);
+            // Игнорируем нули для более точного прогноза
+            if (ignoreZeros)
+            {
+                var nonZeroValues = lastValues.Where(v => v > 0).ToList();
+                if (nonZeroValues.Count > 0)
+                    return Math.Round(nonZeroValues.Average(), 2);
+            }
 
-            // Берем последние windowSize значений
-            var lastValues = values.Skip(values.Count - windowSize).Take(windowSize);
+            if (values.Count < windowSize) return Math.Round(values.Average(), 2);
+
             return Math.Round(lastValues.Average(), 2);
         }
 
         /// Прогноз на N дней вперед
 
-        public static List<double> ForecastNextDays(List<double> historicalData, int windowSize, int days)
+        public static List<double> ForecastNextDays(List<double> historicalData, int windowSize, int days, bool ignoreZeros = true)
         {
             // Оптимизация: проверка входных параметров
             if (historicalData == null || historicalData.Count == 0)
@@ -48,7 +49,7 @@ namespace RunningApp.Forecast
 
             for (int i = 0; i < days; i++)
             {
-                double nextValue = PredictNext(workingData, windowSize);
+                double nextValue = PredictNext(workingData, windowSize, ignoreZeros);
                 forecast.Add(nextValue);
                 workingData.Add(nextValue);
             }

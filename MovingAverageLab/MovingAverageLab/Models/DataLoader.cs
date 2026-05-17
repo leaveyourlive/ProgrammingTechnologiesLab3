@@ -26,9 +26,17 @@ namespace RunningApp.Data
 
                 try
                 {
+                    // Поддержка разных форматов даты
+                    string dateStr = parts[0].Trim();
+                    if (!DateTime.TryParseExact(dateStr, new[] { "yyyy-MM-dd", "dd.MM.yyyy", "dd/MM/yyyy" },
+                        CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
+                    {
+                        throw new Exception($"Ошибка в строке {i + 1}: неверный формат даты '{dateStr}'");
+                    }
+
                     var data = new RunningData
                     {
-                        Date = DateTime.Parse(parts[0].Trim(), CultureInfo.InvariantCulture),
+                        Date = date,
                         DistanceKm = double.Parse(parts[1].Trim(), CultureInfo.InvariantCulture),
                         DurationMinutes = int.Parse(parts[2].Trim()),
                         AvgSpeedKmph = double.Parse(parts[3].Trim(), CultureInfo.InvariantCulture),

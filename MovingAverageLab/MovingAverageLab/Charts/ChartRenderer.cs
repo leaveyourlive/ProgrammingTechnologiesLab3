@@ -52,7 +52,11 @@ namespace RunningApp.Charts
             chart.ChartAreas[0].AxisX.Minimum = 1;
             chart.ChartAreas[0].AxisX.Maximum = data.Count + (forecast?.Count ?? 0);
             chart.ChartAreas[0].AxisY.Minimum = 0;
-            chart.ChartAreas[0].AxisY.Maximum = 12;
+            // Автоматический расчёт максимума для дистанции
+            double maxDistance = data.Max(d => d.DistanceKm);
+            if (forecast != null && forecast.Count > 0)
+                maxDistance = Math.Max(maxDistance, forecast.Max());
+            chart.ChartAreas[0].AxisY.Maximum = maxDistance + 1; // запас 1 км
             chart.ChartAreas[0].AxisY.IsStartedFromZero = true;
             chart.ChartAreas[0].AxisX.Interval = 1;
 
@@ -160,7 +164,9 @@ namespace RunningApp.Charts
             chart.ChartAreas[0].AxisX.Minimum = 1;
             chart.ChartAreas[0].AxisX.Maximum = data.Count;
             chart.ChartAreas[0].AxisY.Minimum = 0;
-            chart.ChartAreas[0].AxisY.Maximum = 16;
+            // Автоматический расчёт максимума для скорости
+            double maxSpeed = data.Max(d => d.AvgSpeedKmph);
+            chart.ChartAreas[0].AxisY.Maximum = maxSpeed + 2; // запас 2 км/ч
             chart.ChartAreas[0].AxisY.IsStartedFromZero = true;
             chart.ChartAreas[0].AxisX.Interval = 1;
 
