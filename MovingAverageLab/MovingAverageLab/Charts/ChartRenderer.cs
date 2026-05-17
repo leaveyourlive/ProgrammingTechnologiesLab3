@@ -15,12 +15,38 @@ namespace RunningApp.Charts
             chart.Series.Clear();
             chart.Titles.Clear();
 
+            // Убеждаемся, что ChartArea один
             if (chart.ChartAreas.Count == 0)
                 chart.ChartAreas.Add(new ChartArea());
-            else
-                chart.ChartAreas[0].AxisX.CustomLabels.Clear();
+
+            // Общий фон графика
+            chart.BackColor = Color.White;
+
+            // Стиль области графика
+            chart.ChartAreas[0].BackColor = Color.FromArgb(240, 248, 255);  // AliceBlue
+            chart.ChartAreas[0].BorderColor = Color.SteelBlue;
+            chart.ChartAreas[0].BorderWidth = 2;
+            chart.ChartAreas[0].ShadowColor = Color.LightGray;
+            chart.ChartAreas[0].ShadowOffset = 2;
+
+            // Сетка
+            chart.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
+            chart.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
+            chart.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
+            chart.ChartAreas[0].AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
+
+            // Шрифты осей
+            chart.ChartAreas[0].AxisX.LabelStyle.Font = new Font("Segoe UI", 8);
+            chart.ChartAreas[0].AxisY.LabelStyle.Font = new Font("Segoe UI", 8);
+            chart.ChartAreas[0].AxisX.TitleFont = new Font("Segoe UI", 9, FontStyle.Bold);
+            chart.ChartAreas[0].AxisY.TitleFont = new Font("Segoe UI", 9, FontStyle.Bold);
+
+            // Цвета осей
+            chart.ChartAreas[0].AxisX.LineColor = Color.DarkGray;
+            chart.ChartAreas[0].AxisY.LineColor = Color.DarkGray;
 
             // Настройка осей
+
             chart.ChartAreas[0].AxisX.Title = "День месяца";
             chart.ChartAreas[0].AxisY.Title = "Дистанция (км)";
             chart.ChartAreas[0].AxisX.Minimum = 1;
@@ -30,14 +56,17 @@ namespace RunningApp.Charts
             chart.ChartAreas[0].AxisY.IsStartedFromZero = true;
             chart.ChartAreas[0].AxisX.Interval = 1;
 
-            // факт данные (синяя линия)
+            // Факт данные
+
             var actual = new Series("Факт")
             {
                 ChartType = SeriesChartType.Line,
                 Color = Color.Blue,
                 BorderWidth = 2,
                 MarkerStyle = MarkerStyle.Circle,
-                MarkerSize = 5
+                MarkerSize = 6,
+                MarkerColor = Color.DarkBlue,
+                ToolTip = "День #{VALX}: {VALY:F2} км"
             };
 
             for (int i = 0; i < data.Count; i++)
@@ -46,7 +75,8 @@ namespace RunningApp.Charts
             }
             chart.Series.Add(actual);
 
-            // Прогноз (красный пунктир)
+            // Прогноз
+
             if (forecast != null && forecast.Count > 0)
             {
                 var forecastSeries = new Series("Прогноз")
@@ -56,7 +86,9 @@ namespace RunningApp.Charts
                     BorderWidth = 2,
                     BorderDashStyle = ChartDashStyle.Dash,
                     MarkerStyle = MarkerStyle.Diamond,
-                    MarkerSize = 6
+                    MarkerSize = 7,
+                    MarkerColor = Color.DarkRed,
+                    ToolTip = "Прогноз дня #{VALX}: {VALY:F2} км"
                 };
 
                 for (int i = 0; i < forecast.Count; i++)
@@ -66,9 +98,31 @@ namespace RunningApp.Charts
                 chart.Series.Add(forecastSeries);
             }
 
-            chart.Legends.Clear();
-            chart.Legends.Add(new Legend("Легенда") { Docking = Docking.Top });
+            // Легенда
 
+            chart.Legends.Clear();
+            var legend = new Legend("Легенда")
+            {
+                Docking = Docking.Top,
+                Font = new Font("Segoe UI", 9),
+                BackColor = Color.WhiteSmoke,
+                BorderColor = Color.SteelBlue,
+                BorderWidth = 1,
+                ShadowOffset = 1
+            };
+            chart.Legends.Add(legend);
+
+            // Заголовок
+
+            var title = new Title("График дистанции пробежек")
+            {
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Docking = Docking.Top,
+                ForeColor = Color.DarkBlue
+            };
+            chart.Titles.Add(title);
+
+            // Принудительное обновление
             chart.Invalidate();
             chart.Update();
         }
@@ -80,9 +134,26 @@ namespace RunningApp.Charts
             chart.Series.Clear();
             chart.Titles.Clear();
 
-            // ChartArea один
             if (chart.ChartAreas.Count == 0)
                 chart.ChartAreas.Add(new ChartArea());
+
+            // Настройка внешнего вида
+
+            chart.BackColor = Color.White;
+            chart.ChartAreas[0].BackColor = Color.FromArgb(240, 255, 240);  // Honeydew
+            chart.ChartAreas[0].BorderColor = Color.ForestGreen;
+            chart.ChartAreas[0].BorderWidth = 2;
+            chart.ChartAreas[0].ShadowOffset = 2;
+
+            chart.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.LightGray;
+            chart.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.LightGray;
+
+            chart.ChartAreas[0].AxisX.LabelStyle.Font = new Font("Segoe UI", 8);
+            chart.ChartAreas[0].AxisY.LabelStyle.Font = new Font("Segoe UI", 8);
+            chart.ChartAreas[0].AxisX.TitleFont = new Font("Segoe UI", 9, FontStyle.Bold);
+            chart.ChartAreas[0].AxisY.TitleFont = new Font("Segoe UI", 9, FontStyle.Bold);
+
+            // Настройка осей
 
             chart.ChartAreas[0].AxisX.Title = "День месяца";
             chart.ChartAreas[0].AxisY.Title = "Скорость (км/ч)";
@@ -94,13 +165,16 @@ namespace RunningApp.Charts
             chart.ChartAreas[0].AxisX.Interval = 1;
 
             // Данные
+
             var series = new Series("Скорость")
             {
                 ChartType = SeriesChartType.Line,
                 Color = Color.Green,
                 BorderWidth = 2,
                 MarkerStyle = MarkerStyle.Triangle,
-                MarkerSize = 5
+                MarkerSize = 6,
+                MarkerColor = Color.DarkGreen,
+                ToolTip = "День #{VALX}: {VALY:F2} км/ч"
             };
 
             for (int i = 0; i < data.Count; i++)
@@ -109,8 +183,28 @@ namespace RunningApp.Charts
             }
             chart.Series.Add(series);
 
+            // Легенда
+
             chart.Legends.Clear();
-            chart.Legends.Add(new Legend("Легенда") { Docking = Docking.Top });
+            var legend = new Legend("Легенда")
+            {
+                Docking = Docking.Top,
+                Font = new Font("Segoe UI", 9),
+                BackColor = Color.WhiteSmoke,
+                BorderColor = Color.ForestGreen,
+                BorderWidth = 1
+            };
+            chart.Legends.Add(legend);
+
+            // Заголовок
+
+            var title = new Title("График средней скорости")
+            {
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Docking = Docking.Top,
+                ForeColor = Color.DarkGreen
+            };
+            chart.Titles.Add(title);
 
             chart.Invalidate();
             chart.Update();
