@@ -1,25 +1,31 @@
 using System.Data;
-using HousingPriceAnalyzer.Models;
-using HousingPriceAnalyzer.Services;
+using MovingAverageLab.Models;
+using MovingAverageLab.Services;
 
-namespace HousingPriceAnalyzer
+namespace MovingAverageLab
 {
     public class MainForm1 : Form
     {
         private readonly IDataLoader       _dataLoader;
-        private readonly IAnalyticsService _analyticsService; // добавлен сервис аналитики
+        private readonly IAnalyticsService _analyticsService;
+        private readonly IForecastService  _forecastService;
 
         private List<HousingRecord> _records = new();
 
-        private DataGridView         _dataGrid    = null!;
-        private ToolStripButton      _btnCharts   = null!;
-        private Label                _lblResult   = null!; // панель аналитики
-        private ToolStripStatusLabel _statusLabel = null!;
+        private DataGridView         _dataGrid        = null!;
+        private NumericUpDown        _numWindow       = null!;
+        private NumericUpDown        _numPeriods      = null!;
+        private ToolStripButton      _btnCharts       = null!;
+        private ToolStripButton      _btnForecastChart = null!;
+        private ToolStripButton      _btnForecastTable = null!;
+        private Label                _lblResult       = null!;
+        private ToolStripStatusLabel _statusLabel     = null!;
 
         public MainForm1()
         {
             _dataLoader       = new JsonDataLoader();
-            _analyticsService = new AnalyticsService(); // инициализация
+            _analyticsService = new AnalyticsService();
+            _forecastService  = new MovingAverageForecastService();
             BuildUI();
         }
 
@@ -31,17 +37,21 @@ namespace HousingPriceAnalyzer
             StartPosition = FormStartPosition.CenterScreen;
             Font          = new Font("Segoe UI", 9.5f);
 
-            // Статус-бар
+            // ── Статус-бар ──
             var statusStrip = new StatusStrip { Dock = DockStyle.Bottom };
             _statusLabel = new ToolStripStatusLabel("Загрузите файл данных...");
             statusStrip.Items.Add(_statusLabel);
 
-            // ToolStrip
+            // ── ToolStrip — всё на одной линии ──
+            _numWindow  = new NumericUpDown { Size = new Size(52, 22), Minimum = 2, Maximum = 10, Value = 3 };
+            _numPeriods = new NumericUpDown { Size = new Size(52, 22), Minimum = 1, Maximum = 15, Value = 5 };
+
             var toolStrip = new ToolStrip
             {
                 Dock      = DockStyle.Top,
                 GripStyle = ToolStripGripStyle.Hidden,
-                Padding   = new Padding(4, 2, 4, 2)
+                Padding   = new Padding(4, 2, 4, 2),
+                ImageScalingSize = new Size(16, 16)
             };
 
             var btnOpen = new ToolStripButton("📂  Открыть файл")
@@ -59,14 +69,37 @@ namespace HousingPriceAnalyzer
             };
             _btnCharts.Click += OnShowCharts;
 
+            _btnForecastChart = new ToolStripButton("🔮  График прогноза")
+            {
+                DisplayStyle = ToolStripItemDisplayStyle.Text,
+                Font         = new Font("Segoe UI", 9.5f),
+                Enabled      = false
+            };
+            _btnForecastChart.Click += OnShowForecastChart;
+
+            _btnForecastTable = new ToolStripButton("📋  Таблица прогноза")
+            {
+                DisplayStyle = ToolStripItemDisplayStyle.Text,
+                Font         = new Font("Segoe UI", 9.5f),
+                Enabled      = false
+            };
+            _btnForecastTable.Click += OnShowForecastTable;
+
             toolStrip.Items.AddRange(new ToolStripItem[]
             {
                 btnOpen,
                 new ToolStripSeparator(),
-                _btnCharts
+                new ToolStripLabel("Окно (n):"),
+                new ToolStripControlHost(_numWindow),
+                new ToolStripLabel("  Прогноз (лет):"),
+                new ToolStripControlHost(_numPeriods),
+                new ToolStripSeparator(),
+                _btnCharts,
+                _btnForecastChart,
+                _btnForecastTable
             });
 
-            // Панель аналитики внизу
+            // ── Панель аналитики ──
             var analyticsPanel = new Panel
             {
                 Dock      = DockStyle.Bottom,
@@ -95,7 +128,7 @@ namespace HousingPriceAnalyzer
             analyticsPanel.Controls.Add(_lblResult);
             analyticsPanel.Controls.Add(lblTitle);
 
-            // Таблица данных
+            // ── Таблица ──
             _dataGrid = new DataGridView
             {
                 Dock                  = DockStyle.Fill,
@@ -133,6 +166,8 @@ namespace HousingPriceAnalyzer
             Controls.Add(statusStrip);
         }
 
+        // ── Обработчики событий ──
+
         private void OnOpenFile(object? sender, EventArgs e)
         {
             using var dlg = new OpenFileDialog
@@ -148,8 +183,11 @@ namespace HousingPriceAnalyzer
             {
                 _records = _dataLoader.LoadData(dlg.FileName);
                 FillTable();
-                ShowAnalytics(); // вызываем аналитику после загрузки
-                _btnCharts.Enabled = true;
+                ShowAnalytics();
+
+                _btnCharts.Enabled        = true;
+                _btnForecastChart.Enabled = true;
+                _btnForecastTable.Enabled = true;
                 _statusLabel.Text = $"✓  Загружено {_records.Count} записей  |  {dlg.FileName}";
             }
             catch (Exception ex)
@@ -164,6 +202,40 @@ namespace HousingPriceAnalyzer
             if (_records.Count == 0) return;
             new ChartForm(_records, null).Show(this);
         }
+
+        private void OnShowForecastChart(object? sender, EventArgs e)
+        {
+            if (_records.Count == 0) return;
+            try
+            {
+                var forecast = _forecastService.Forecast(
+                    _records, (int)_numWindow.Value, (int)_numPeriods.Value);
+                new ChartForm(_records, forecast).Show(this);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при расчёте прогноза:\n{ex.Message}",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void OnShowForecastTable(object? sender, EventArgs e)
+        {
+            if (_records.Count == 0) return;
+            try
+            {
+                var forecast = _forecastService.Forecast(
+                    _records, (int)_numWindow.Value, (int)_numPeriods.Value);
+                new ForecastTableForm(forecast).Show(this);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при расчёте прогноза:\n{ex.Message}",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // ── Вспомогательные методы ──
 
         private void FillTable()
         {
@@ -182,7 +254,6 @@ namespace HousingPriceAnalyzer
             _dataGrid.DataSource = table;
         }
 
-        // новый метод — отображает результаты аналитики
         private void ShowAnalytics()
         {
             if (_records.Count < 2) { _lblResult.Text = "Недостаточно данных."; return; }

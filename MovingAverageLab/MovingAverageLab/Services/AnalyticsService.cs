@@ -1,6 +1,6 @@
-using HousingPriceAnalyzer.Models;
+using MovingAverageLab.Models;
 
-namespace HousingPriceAnalyzer.Services
+namespace MovingAverageLab.Services
 {
     // Вычисляет какой тип квартир подорожал больше и меньше всего
     // за весь период наблюдения (от первого года к последнему)

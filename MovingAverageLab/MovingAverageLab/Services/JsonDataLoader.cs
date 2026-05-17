@@ -1,7 +1,7 @@
 using System.Text.Json;
-using HousingPriceAnalyzer.Models;
+using MovingAverageLab.Models;
 
-namespace HousingPriceAnalyzer.Services
+namespace MovingAverageLab.Services
 {
     // Загружает данные из JSON-файла
     // Использует встроенный System.Text.Json (.NET 8), без внешних зависимостей

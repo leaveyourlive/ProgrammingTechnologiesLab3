@@ -1,6 +1,6 @@
-using HousingPriceAnalyzer.Models;
+using MovingAverageLab.Models;
 
-namespace HousingPriceAnalyzer.Services
+namespace MovingAverageLab.Services
 {
     // Интерфейс загрузки данных из файла
     // Dependency Inversion: зависим от абстракции, не от конкретной реализации

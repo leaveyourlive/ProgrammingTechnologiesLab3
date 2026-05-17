@@ -1,0 +1,17 @@
+[
+  { "Year": 2010, "OneRoom": 47200, "TwoRoom": 44000, "ThreeRoom": 42500 },
+  { "Year": 2011, "OneRoom": 50100, "TwoRoom": 46800, "ThreeRoom": 45200 },
+  { "Year": 2012, "OneRoom": 52800, "TwoRoom": 49500, "ThreeRoom": 47900 },
+  { "Year": 2013, "OneRoom": 55400, "TwoRoom": 52100, "ThreeRoom": 50300 },
+  { "Year": 2014, "OneRoom": 57900, "TwoRoom": 54600, "ThreeRoom": 52800 },
+  { "Year": 2015, "OneRoom": 57200, "TwoRoom": 53800, "ThreeRoom": 52100 },
+  { "Year": 2016, "OneRoom": 56100, "TwoRoom": 52700, "ThreeRoom": 51000 },
+  { "Year": 2017, "OneRoom": 56800, "TwoRoom": 53300, "ThreeRoom": 51600 },
+  { "Year": 2018, "OneRoom": 59200, "TwoRoom": 55900, "ThreeRoom": 54100 },
+  { "Year": 2019, "OneRoom": 63400, "TwoRoom": 59800, "ThreeRoom": 57900 },
+  { "Year": 2020, "OneRoom": 73500, "TwoRoom": 69200, "ThreeRoom": 67100 },
+  { "Year": 2021, "OneRoom": 96200, "TwoRoom": 91000, "ThreeRoom": 88400 },
+  { "Year": 2022, "OneRoom": 116800, "TwoRoom": 110500, "ThreeRoom": 107200 },
+  { "Year": 2023, "OneRoom": 130500, "TwoRoom": 123200, "ThreeRoom": 119600 },
+  { "Year": 2024, "OneRoom": 147200, "TwoRoom": 138900, "ThreeRoom": 134500 }
+]

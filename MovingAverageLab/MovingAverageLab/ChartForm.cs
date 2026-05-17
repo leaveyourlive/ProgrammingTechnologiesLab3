@@ -3,14 +3,11 @@ using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
 using OxyPlot.WindowsForms;
-using HousingPriceAnalyzer.Models;
+using MovingAverageLab.Models;
 
 namespace MovingAverageLab
 {
     // Окно с графиком цен. Поддерживает:
-    // — зум (колесо мыши), пан (ЛКМ + перетаскивание)
-    // — выбор диапазона лет
-    // — экспорт PNG / SVG
 
     public class ChartForm : Form
     {

@@ -1,4 +1,4 @@
-namespace HousingPriceAnalyzer.Models
+namespace MovingAverageLab.Models
 {
     // Данные о ценах на первичное жильё за один год (по данным Росстат)
     // Цена указывается в рублях за 1 кв.м

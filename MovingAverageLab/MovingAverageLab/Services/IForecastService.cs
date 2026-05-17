@@ -1,6 +1,6 @@
-using HousingPriceAnalyzer.Models;
+using MovingAverageLab.Models;
 
-namespace HousingPriceAnalyzer.Services
+namespace MovingAverageLab.Services
 {
     // Интерфейс прогнозирования цен
     // Open/Closed: можно легко заменить алгоритм не меняя остальной код

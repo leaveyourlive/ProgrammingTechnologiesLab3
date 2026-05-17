@@ -1,6 +1,6 @@
-using HousingPriceAnalyzer.Models;
+using MovingAverageLab.Models;
 
-namespace HousingPriceAnalyzer.Services
+namespace MovingAverageLab.Services
 {
     // Результат аналитики — какой тип квартир подорожал больше/меньше
     // record — неизменяемый тип (инкапсуляция данных)

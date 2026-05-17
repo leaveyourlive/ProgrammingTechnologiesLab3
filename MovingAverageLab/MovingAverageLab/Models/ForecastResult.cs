@@ -1,4 +1,4 @@
-namespace HousingPriceAnalyzer.Models
+namespace MovingAverageLab.Models
 {
     // Прогнозное значение цены на жильё для одного года
     // Рассчитывается методом экстраполяции по скользящей средней
