@@ -7,12 +7,11 @@ using HousingPriceAnalyzer.Models;
 
 namespace MovingAverageLab
 {
-    /// <summary>
-    /// Окно с графиком цен. Поддерживает:
-    /// — зум (колесо мыши), пан (ЛКМ + перетаскивание)
-    /// — выбор диапазона лет
-    /// — экспорт PNG / SVG
-    /// </summary>
+    // Окно с графиком цен. Поддерживает:
+    // — зум (колесо мыши), пан (ЛКМ + перетаскивание)
+    // — выбор диапазона лет
+    // — экспорт PNG / SVG
+
     public class ChartForm : Form
     {
         private readonly List<HousingRecord>  _records;

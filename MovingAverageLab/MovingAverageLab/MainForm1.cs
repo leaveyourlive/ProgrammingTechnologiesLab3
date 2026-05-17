@@ -2,21 +2,24 @@ using System.Data;
 using HousingPriceAnalyzer.Models;
 using HousingPriceAnalyzer.Services;
 
-namespace MovingAverageLab
+namespace HousingPriceAnalyzer
 {
     public class MainForm1 : Form
     {
-        private readonly IDataLoader _dataLoader;
+        private readonly IDataLoader       _dataLoader;
+        private readonly IAnalyticsService _analyticsService; // добавлен сервис аналитики
 
         private List<HousingRecord> _records = new();
 
         private DataGridView         _dataGrid    = null!;
-        private ToolStripButton      _btnCharts   = null!;  // новая кнопка графиков
+        private ToolStripButton      _btnCharts   = null!;
+        private Label                _lblResult   = null!; // панель аналитики
         private ToolStripStatusLabel _statusLabel = null!;
 
         public MainForm1()
         {
-            _dataLoader = new JsonDataLoader();
+            _dataLoader       = new JsonDataLoader();
+            _analyticsService = new AnalyticsService(); // инициализация
             BuildUI();
         }
 
@@ -33,7 +36,7 @@ namespace MovingAverageLab
             _statusLabel = new ToolStripStatusLabel("Загрузите файл данных...");
             statusStrip.Items.Add(_statusLabel);
 
-            // ToolStrip — добавлена кнопка Графики
+            // ToolStrip
             var toolStrip = new ToolStrip
             {
                 Dock      = DockStyle.Top,
@@ -48,7 +51,6 @@ namespace MovingAverageLab
             };
             btnOpen.Click += OnOpenFile;
 
-            // добавляем кнопку графиков
             _btnCharts = new ToolStripButton("📊  Графики")
             {
                 DisplayStyle = ToolStripItemDisplayStyle.Text,
@@ -63,6 +65,35 @@ namespace MovingAverageLab
                 new ToolStripSeparator(),
                 _btnCharts
             });
+
+            // Панель аналитики внизу
+            var analyticsPanel = new Panel
+            {
+                Dock      = DockStyle.Bottom,
+                Height    = 65,
+                BackColor = Color.FromArgb(232, 244, 255),
+                Padding   = new Padding(15, 6, 15, 6)
+            };
+
+            var lblTitle = new Label
+            {
+                Text      = "Аналитика за период:",
+                Font      = new Font("Segoe UI", 9.5f, FontStyle.Bold),
+                Dock      = DockStyle.Top,
+                Height    = 20,
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+
+            _lblResult = new Label
+            {
+                Text      = "Загрузите файл данных для отображения аналитики.",
+                Font      = new Font("Segoe UI", 9.5f),
+                Dock      = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+
+            analyticsPanel.Controls.Add(_lblResult);
+            analyticsPanel.Controls.Add(lblTitle);
 
             // Таблица данных
             _dataGrid = new DataGridView
@@ -97,6 +128,7 @@ namespace MovingAverageLab
             };
 
             Controls.Add(_dataGrid);
+            Controls.Add(analyticsPanel);
             Controls.Add(toolStrip);
             Controls.Add(statusStrip);
         }
@@ -116,7 +148,8 @@ namespace MovingAverageLab
             {
                 _records = _dataLoader.LoadData(dlg.FileName);
                 FillTable();
-                _btnCharts.Enabled = true; // активируем кнопку после загрузки
+                ShowAnalytics(); // вызываем аналитику после загрузки
+                _btnCharts.Enabled = true;
                 _statusLabel.Text = $"✓  Загружено {_records.Count} записей  |  {dlg.FileName}";
             }
             catch (Exception ex)
@@ -147,6 +180,21 @@ namespace MovingAverageLab
                     r.ThreeRoom.ToString("N0"));
 
             _dataGrid.DataSource = table;
+        }
+
+        // новый метод — отображает результаты аналитики
+        private void ShowAnalytics()
+        {
+            if (_records.Count < 2) { _lblResult.Text = "Недостаточно данных."; return; }
+
+            var result = _analyticsService.Analyze(_records);
+            int y1 = _records.First().Year;
+            int y2 = _records.Last().Year;
+
+            _lblResult.Text =
+                $"Больше всего подорожали: {result.MostGrownType} — +{result.MostGrownPercent:F1}% ({y1}–{y2})" +
+                $"     |     " +
+                $"Меньше всего подорожали: {result.LeastGrownType} — +{result.LeastGrownPercent:F1}%";
         }
     }
 }
