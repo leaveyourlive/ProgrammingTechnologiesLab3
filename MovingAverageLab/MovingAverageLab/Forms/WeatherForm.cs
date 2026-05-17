@@ -17,6 +17,7 @@ namespace MovingAverageLab.Forms
         private NumericUpDown _numN = null!;
         private NumericUpDown _numDayFrom = null!;
         private NumericUpDown _numDayTo = null!;
+        private Label _lblStats = null!;
 
         public WeatherForm()
         {
@@ -125,9 +126,8 @@ namespace MovingAverageLab.Forms
                 Top = 10
             };
 
-            var lblStats = new Label
+            _lblStats = new Label
             {
-                Name = "lblStats",
                 ForeColor = Color.LightGray,
                 AutoSize = false,
                 Width = 480,
@@ -136,7 +136,7 @@ namespace MovingAverageLab.Forms
                 Top = 22,
                 Font = new Font("Segoe UI", 8f)
             };
-            bottomPanel.Controls.Add(lblStats);
+            bottomPanel.Controls.Add(_lblStats);
 
             var btnForecast = new Button
             {
@@ -198,9 +198,7 @@ namespace MovingAverageLab.Forms
                 .Select(g => $"{g.Key}: {g.Count()} дн.")
                 .ToList();
 
-            var lblStats = Controls.Find("lblStats", true).FirstOrDefault() as Label;
-            if (lblStats != null)
-                lblStats.Text = "Погода: " + string.Join("   ", stats);
+            _lblStats.Text = "Погода: " + string.Join("   ", stats);
         }
         private void BtnApply_Click(object? sender, EventArgs e)
         {
@@ -331,12 +329,13 @@ namespace MovingAverageLab.Forms
             if (_data.Count == 0) return;
 
             int n = (int)_numN.Value;
-            var forecaster = new MovingAverageForecaster(n);
+
             var avgValues = _data.Select(r => r.AvgTemp).ToList();
+            var forecaster = new MovingAverageForecaster();
 
             try
             {
-                var forecast = forecaster.Forecast(avgValues, n);
+                var forecast = forecaster.Forecast(avgValues, n, n);
                 var model = _plotView.Model;
 
                 // Убираем старый прогноз если есть

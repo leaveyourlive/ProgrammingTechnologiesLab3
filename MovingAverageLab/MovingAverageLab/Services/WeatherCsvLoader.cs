@@ -32,7 +32,11 @@ namespace MovingAverageLab.Services
                         Description = parts[4].Trim()
                     });
                 }
-                catch { continue; }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Не удалось разобрать строку: {line}. Ошибка: {ex.Message}");
+                    continue;
+                }
             }
 
             return records;
