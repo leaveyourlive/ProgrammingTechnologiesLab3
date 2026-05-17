@@ -21,7 +21,6 @@ namespace MovingAverageLab.Controls
         private NumericUpDown _stepsForecast;
         private Button _buildButton;
         private Button _exportPngButton;
-        private Button _exportPdfButton;
 
         public ChartControl(SalaryDataset dataset, SalaryAnalytics analytics)
         {
@@ -87,14 +86,11 @@ namespace MovingAverageLab.Controls
             _exportPngButton = new Button { Text = "Экспорт PNG", Left = 600, Top = 10, Width = 90 };
             _exportPngButton.Click += ExportPng;
 
-            _exportPdfButton = new Button { Text = "Экспорт PDF", Left = 700, Top = 10, Width = 90 };
-            _exportPdfButton.Click += ExportPdf;
-
             panel.Controls.AddRange(new Control[]
             {
                 fromLabel, _fromYearCombo, toLabel, _toYearCombo,
                 nLabel, _nWindow, stepsLabel, _stepsForecast,
-                _buildButton, _exportPngButton, _exportPdfButton
+                _buildButton, _exportPngButton
             });
 
             _chart = new Chart { Dock = DockStyle.Fill };
@@ -210,25 +206,6 @@ namespace MovingAverageLab.Controls
                 {
                     _chart.SaveImage(saveDialog.FileName, ChartImageFormat.Png);
                     MessageBox.Show($"Сохранено: {saveDialog.FileName}", "Экспорт",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-        }
-
-        private void ExportPdf(object sender, EventArgs e)
-        {
-            using (var saveDialog = new SaveFileDialog())
-            {
-                saveDialog.Filter = "PDF файлы|*.pdf";
-                saveDialog.DefaultExt = "pdf";
-                if (saveDialog.ShowDialog() == DialogResult.OK)
-                {
-                    
-                    // сохраняем как PNG с предупреждением
-                    string pngPath = System.IO.Path.GetTempFileName() + ".png";
-                    _chart.SaveImage(pngPath, ChartImageFormat.Png);
-                    MessageBox.Show($"Экспорт в PDF требует дополнительной настройки.\n" +
-                        $"Временно сохранен PNG: {pngPath}", "Экспорт",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
