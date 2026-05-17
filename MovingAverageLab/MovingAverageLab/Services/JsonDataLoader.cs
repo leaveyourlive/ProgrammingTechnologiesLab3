@@ -26,7 +26,16 @@ namespace MovingAverageLab.Services
                 throw new InvalidDataException("Файл пуст или имеет неверный формат.");
 
             // Сортируем на случай, если порядок в файле нарушен
+
+            if (records == null || records.Count == 0)
+                throw new InvalidDataException("Файл пуст или имеет неверный формат.");
+
+            if (records.Any(r => r.OneRoom <= 0 || r.TwoRoom <= 0 || r.ThreeRoom <= 0))
+                throw new InvalidDataException("Файл содержит некорректные данные: цены должны быть больше нуля.");
+
+            // Сортируем на случай, если порядок в файле нарушен
             return records.OrderBy(r => r.Year).ToList();
+
         }
     }
 }

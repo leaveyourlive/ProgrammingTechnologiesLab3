@@ -73,7 +73,7 @@ namespace MovingAverageLab
             var lblDash = new Label
             {
                 Text     = "—",
-                Location = new Point(180, 14),
+                Location = new Point(174, 14),
                 AutoSize = true
             };
 
@@ -213,8 +213,7 @@ namespace MovingAverageLab
                     var lastReal = filtered.LastOrDefault() ?? _records.Last();
 
                     AddLine(model,
-                        Prepend((lastReal.Year, lastReal.OneRoom),
-                            forecastFiltered.Select(f => (f.Year, f.OneRoom))),
+                        forecastFiltered.Select(f => (f.Year, f.OneRoom)).Prepend((lastReal.Year, lastReal.OneRoom)),
                         "1-комн. (прогноз)", OxyColors.CornflowerBlue, LineStyle.Dash);
                     AddLine(model,
                         Prepend((lastReal.Year, lastReal.TwoRoom),

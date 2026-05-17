@@ -262,10 +262,18 @@ namespace MovingAverageLab
             int y1 = _records.First().Year;
             int y2 = _records.Last().Year;
 
+            string FormatChange(double percent)
+                => percent >= 0 ? $"+{percent:F1}%" : $"{percent:F1}%";
+
+            string FormatLabel(string type, double percent)
+                => percent >= 0
+                    ? $"подорожали: {type} — {FormatChange(percent)}"
+                    : $"подешевели: {type} — {FormatChange(percent)}";
+
             _lblResult.Text =
-                $"Больше всего подорожали: {result.MostGrownType} — +{result.MostGrownPercent:F1}% ({y1}–{y2})" +
+                $"Больше всего {FormatLabel(result.MostGrownType, result.MostGrownPercent)} ({y1}–{y2})" +
                 $"     |     " +
-                $"Меньше всего подорожали: {result.LeastGrownType} — +{result.LeastGrownPercent:F1}%";
+                $"Меньше всего {FormatLabel(result.LeastGrownType, result.LeastGrownPercent)}";
         }
     }
 }
