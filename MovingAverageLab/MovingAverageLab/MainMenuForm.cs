@@ -60,7 +60,7 @@ namespace MovingAverageLab
 
             // Вариант 8
             RoundedButton btn8 = CreateStyledButton("ВАРИАНТ 8: ЗАРПЛАТЫ");
-            btn8.Click += (s, e) => MessageBox.Show("Задание 8: Медианная зарплата в РФ.", "Информация");
+            btn8.Click += (s, e) => new MovingAverageLab.Forms.SalaryTabForm().Show();
 
             // Вариант 9
             RoundedButton btn9 = CreateStyledButton("ВАРИАНТ 9: ЖИЛЬЁ");
