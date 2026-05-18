@@ -104,6 +104,11 @@ namespace MovingAverageLab.Controls
 
         private void PlotChart()
         {
+            if (_chart.ChartAreas.Count > 0)
+{
+                _chart.ChartAreas[0].AxisX.ScaleView.ZoomReset();
+                _chart.ChartAreas[0].AxisY.ScaleView.ZoomReset();
+            }
             int yFrom = int.Parse(_fromYearCombo.SelectedItem.ToString());
             int yTo = int.Parse(_toYearCombo.SelectedItem.ToString());
             int n = (int)_nWindow.Value;

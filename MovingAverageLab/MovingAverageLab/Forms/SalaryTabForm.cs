@@ -161,7 +161,14 @@ namespace MovingAverageLab.Forms
 
                 lines.Add($"=== {gender.Item2} ===");
                 lines.Add($"Макс. рост: {maxGrowth.Change:+0.0;-0.0}% ({maxGrowth.Year})");
-                lines.Add($"Мин. рост: {minGrowth.Change:+0.0;-0.0}% ({minGrowth.Year})");
+                if (minGrowth.Change < 0)
+                {
+                    lines.Add($"Макс. падение: {minGrowth.Change:+0.0;-0.0}% ({minGrowth.Year})");
+                }
+                else
+                {
+                    lines.Add($"Мин. рост: {minGrowth.Change:+0.0;-0.0}% ({minGrowth.Year})");
+                }
                 lines.Add("");
             }
 

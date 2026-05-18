@@ -75,9 +75,11 @@ namespace MovingAverageLab.Analytics
             var data = new List<double>(values);
             var forecast = new List<double>();
 
+            int actualN = Math.Min(n, data.Count);  // добавить
+
             for (int step = 0; step < steps; step++)
             {
-                var window = data.Skip(data.Count - n).Take(n).ToList();
+                var window = data.Skip(data.Count - actualN).Take(actualN).ToList();  // заменить n на actualN
                 double nextVal = window.Average();
                 forecast.Add(nextVal);
                 data.Add(nextVal);
